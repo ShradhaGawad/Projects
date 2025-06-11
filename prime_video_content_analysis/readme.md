@@ -2,7 +2,7 @@
 
 **Goal**: Uncover strategic content insights for Prime Video by analyzing 9,655+ titles to guide smarter content acquisition and marketing.
 
-![Dashboard](AmazonPrimeVideoAnalysis.pdf)
+![Dashboard](AmazonPrimeVideoContentAnalysis.png)
 
  🔥 **Key Insights**
 
