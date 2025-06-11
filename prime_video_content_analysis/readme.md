@@ -2,6 +2,8 @@
 
 **Goal**: Uncover strategic content insights for Prime Video by analyzing 9,655+ titles to guide smarter content acquisition and marketing.
 
+![Dashboard](AmazonPrimeVideoAnalysis.pdf)
+
  🔥 **Key Insights**
 
 - **Audience Gap**: Over 70% of content is rated 13+ and 16+, with limited PG/family-friendly content — a missed opportunity to engage wider demographics.
