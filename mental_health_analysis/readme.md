@@ -28,5 +28,6 @@ To identify emotional trends among university students using daily survey data a
 - Empathy + data = powerful change in student well-being strategies.
 
 
-[**Storytelling Click here**](mental_health_analysis/Presentation.pdf)
-[**Code Click here**](mental_health_analysis/PythonCode.py)
+**Storytelling** [Click here](mental_health_analysis/Presentation.pdf)
+
+**Code** [Click here](mental_health_analysis/PythonCode.py)
