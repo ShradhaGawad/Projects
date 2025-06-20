@@ -30,4 +30,4 @@ To identify emotional trends among university students using daily survey data a
 
 **Storytelling** [Click here](Presentation.pdf)
 
-**Code** [Click here](PythonCode.py)
+**Code** [Click here](PythonCode.ipynb)
