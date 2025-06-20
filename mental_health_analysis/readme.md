@@ -3,7 +3,7 @@
 **Goal:**
 To identify emotional trends among university students using daily survey data and uncover insights to support well-being interventions.
 
-![Image(image.png)
+![Image](image.png)
 
 🔍 **Key Insights**
 - **Emotional Peaks:** Stress and sadness spiked during mid-February, aligning with academic pressure.
