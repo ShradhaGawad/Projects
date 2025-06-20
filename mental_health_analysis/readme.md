@@ -6,10 +6,10 @@ To identify emotional trends among university students using daily survey data a
 
 - [**Storytelling**](Presentation.pdf)
 - [**Code**](PythonCode.ipynb)
-- [**Key Insights**](####Key-Insights)
-- [**Recommendations**](####Recommendations)
-- [**Tools-and-Skills**](####Tools-and-Skills)
-- [**Key-Takeaways**](####Key-Takeaways)
+- [**Key Insights**](#key-insights)
+- [**Recommendations**](#recommendations)
+- [**Tools-and-Skills**](#tools-and-skills)
+- [**Key-Takeaways**](#key-takeaways)
 
 ![Image](image.png)
 
