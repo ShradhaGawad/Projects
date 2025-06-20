@@ -1,4 +1,4 @@
-**The Emotional Well-being Journey | Mental Health Analysis of University Students | Python**
+🧠 **The Emotional Well-being Journey | Mental Health Analysis of University Students | Python**
 
 **Goal:**
 To identify emotional trends among university students using daily survey data and uncover insights to support well-being interventions.
