@@ -3,6 +3,11 @@
 **Goal:**
 To identify emotional trends among university students using daily survey data and uncover insights to support well-being interventions.
 
+
+**Storytelling** [Click here](Presentation.pdf)
+
+**Code** [Click here](PythonCode.ipynb)
+
 ![Image](image.png)
 
 🔍 **Key Insights**
@@ -28,8 +33,3 @@ To identify emotional trends among university students using daily survey data a
 - Data can reveal invisible emotional burdens in students' lives.
 - Mental health insights improve when emotional, contextual, and behavioral data are analyzed together.
 - Empathy + data = powerful change in student well-being strategies.
-
-
-**Storytelling** [Click here](Presentation.pdf)
-
-**Code** [Click here](PythonCode.ipynb)
