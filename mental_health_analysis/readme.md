@@ -6,15 +6,15 @@ To identify emotional trends among university students using daily survey data a
 
 - [**Storytelling**](Presentation.pdf)
 - [**Code**](PythonCode.ipynb)
-- [**Key Insights**](#key-insights)
+- [**Key Insights**](#key-insights-)
 - [**Recommendations**](#recommendations)
 - [**Tools and Skills**](#tools-and-skills)
 - [**Key Takeaways**](#key-takeaways)
 
 ![Image](image.png)
 
-🔍 
-#### **Key Insights**
+
+#### **Key Insights** 🔍
 - **Emotional Peaks:** Stress and sadness spiked during mid-February, aligning with academic pressure.
 - **Location Impact:** Students felt more stressed on campus, and more content at home.
 - **Activity Impact:** Classes and meetings increased stress, while rest and travel boosted contentment.
