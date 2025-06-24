@@ -1,0 +1,167 @@
+set serveroutput on;
+Declare
+Begin
+add_cuisinetype('American');
+add_cuisinetype('Italian');
+add_cuisinetype('BBQ');
+add_cuisinetype('Indian');
+add_cuisinetype('Ethiopian');
+add_restaurants('Ribs_R_US','1000 Hilltop Circle', 'Baltimore', 'MD', 21250 , FIND_CUISINE_TYPE_ID('American'));
+add_restaurants('Taco','1000 Hilltop Circle', 'Atlanta', 'GA', 21250 , FIND_CUISINE_TYPE_ID('American'));
+
+add_restaurants('Bull Roast','29 Street', 'Brooklyn', 'NY', 10013 , FIND_CUISINE_TYPE_ID('BBQ'));
+add_restaurants('Smokehouse','29 Street', 'NJ', 'NJ', 10013 , FIND_CUISINE_TYPE_ID('BBQ'));
+
+add_restaurants('Bella Italia','1000 Hilltop Circle', 'Baltimore', 'MD', 21043 , FIND_CUISINE_TYPE_ID('Italian'));
+add_restaurants('Roma','1000 Hilltop Circle', 'Texas', 'TX', 21043 , FIND_CUISINE_TYPE_ID('Italian'));
+
+add_restaurants('Taj Mahal','7315 3rd Ave', 'Brooklyn', 'NY', 10013 , FIND_CUISINE_TYPE_ID('Indian'));
+add_restaurants('Chapati','7315 3rd Ave', 'San Diego', 'CA', 10013 , FIND_CUISINE_TYPE_ID('Indian'));
+
+add_restaurants('Seals','49 Main Street', 'Beech Creek', 'PA', 16822 , FIND_CUISINE_TYPE_ID('Ethiopian'));
+add_restaurants('Ethiop','57 Main Street', 'Boom', 'PA', 16822 , FIND_CUISINE_TYPE_ID('Ethiopian'));
+
+HIRE_WAITER('Jack',find_restaurant_id('Ribs_R_US'));
+HIRE_WAITER('Jill',find_restaurant_id('Ribs_R_US'));
+HIRE_WAITER('Wendy',find_restaurant_id('Ribs_R_US'));
+HIRE_WAITER('Hailey',find_restaurant_id('Ribs_R_US'));
+HIRE_WAITER('Mary',find_restaurant_id('Bella Italia'));
+HIRE_WAITER('Pat',find_restaurant_id('Bella Italia'));
+HIRE_WAITER('Michael',find_restaurant_id('Bella Italia'));
+HIRE_WAITER('Rakesh',find_restaurant_id('Bella Italia'));
+HIRE_WAITER('Verma',find_restaurant_id('Bella Italia'));
+HIRE_WAITER('Mike',find_restaurant_id('Roma'));
+HIRE_WAITER('Judy',find_restaurant_id('Roma'));    
+HIRE_WAITER('Gupta',find_restaurant_id('Taj Mahal'));
+HIRE_WAITER('Hannah',find_restaurant_id('Bull Roast'));
+
+HIRE_WAITER('Vallz',find_restaurant_id('Smokehouse'));
+HIRE_WAITER('Mikey',find_restaurant_id('Taco'));
+HIRE_WAITER('Juno',find_restaurant_id('Chapati'));    
+HIRE_WAITER('Harry',find_restaurant_id('Ethiop'));
+HIRE_WAITER('Tom',find_restaurant_id('Selasie'));
+
+    
+create_menu_item('burger', 10, FIND_CUISINE_TYPE_ID('American'));
+create_menu_item('fries', 5, FIND_CUISINE_TYPE_ID('American'));
+create_menu_item('pasta', 15, FIND_CUISINE_TYPE_ID('American'));
+create_menu_item('salad', 10, FIND_CUISINE_TYPE_ID('American'));
+create_menu_item('salmon', 20, FIND_CUISINE_TYPE_ID('American'));
+
+
+create_menu_item('lasagna', 15, FIND_CUISINE_TYPE_ID('Italian'));
+create_menu_item('meatballs', 10, FIND_CUISINE_TYPE_ID('Italian'));
+create_menu_item('spaghetti', 15, FIND_CUISINE_TYPE_ID('Italian'));
+create_menu_item('pizza', 20, FIND_CUISINE_TYPE_ID('Italian'));
+
+    
+create_menu_item('steak', 25, FIND_CUISINE_TYPE_ID('BBQ'));
+create_menu_item('pork loin', 15, FIND_CUISINE_TYPE_ID('BBQ'));
+create_menu_item('fillet mignon', 30, FIND_CUISINE_TYPE_ID('BBQ'));
+
+create_menu_item('dal soup', 10, FIND_CUISINE_TYPE_ID('Indian'));
+create_menu_item('rice', 5, FIND_CUISINE_TYPE_ID('Indian'));
+create_menu_item('tandoori chicken', 10, FIND_CUISINE_TYPE_ID('Indian'));
+create_menu_item('samosa', 8, FIND_CUISINE_TYPE_ID('Indian'));
+
+create_menu_item('meat chunks', 12, FIND_CUISINE_TYPE_ID('Ethiopian'));
+create_menu_item('legume stew', 10, FIND_CUISINE_TYPE_ID('Ethiopian'));
+create_menu_item('flatbread', 3, FIND_CUISINE_TYPE_ID('Ethiopian'));
+
+
+ADD_ITEM_TO_inventory('Taco', 'pasta', 50);
+ADD_ITEM_TO_inventory('Taco', 'salad', 150);
+ADD_ITEM_TO_inventory('Taco', 'salmon', 150);
+
+
+ADD_ITEM_TO_inventory('Ribs_R_US', 'burger', 50);
+ADD_ITEM_TO_inventory('Ribs_R_US', 'fries', 150);
+
+ADD_ITEM_TO_inventory('Bella Italia', 'lasagna', 10);
+ADD_ITEM_TO_inventory('Bella Italia', 'pizza', 100);
+ADD_ITEM_TO_inventory('Bella Italia', 'spaghetti', 100);
+
+ADD_ITEM_TO_inventory('Bull Roast', 'steak', 15);
+ADD_ITEM_TO_inventory('Bull Roast', 'pork loin', 50);
+ADD_ITEM_TO_inventory('Bull Roast', 'fillet mignon', 5);
+
+ADD_ITEM_TO_inventory('Smokehouse', 'steak', 15);
+ADD_ITEM_TO_inventory('Smokehouse', 'pork loin', 50);
+ADD_ITEM_TO_inventory('Smokehouse', 'fillet mignon', 5);
+
+ADD_ITEM_TO_inventory('Taj Mahal', 'dal soup', 50);
+ADD_ITEM_TO_inventory('Taj Mahal', 'rice', 500);
+ADD_ITEM_TO_inventory('Taj Mahal', 'samosa', 150);
+
+ADD_ITEM_TO_inventory('Chapati', 'dal soup', 50);
+ADD_ITEM_TO_inventory('Chapati', 'rice', 500);
+ADD_ITEM_TO_inventory('Chapati', 'samosa', 150);
+
+ADD_ITEM_TO_inventory('Ethiop', 'meat chunks', 50);
+ADD_ITEM_TO_inventory('Ethiop', 'legume stew', 500);
+ADD_ITEM_TO_inventory('Ethiop', 'flatbread', 150);
+
+ADD_ITEM_TO_inventory('Selasie', 'meat chunks', 50);
+ADD_ITEM_TO_inventory('Selasie', 'legume stew', 500);
+ADD_ITEM_TO_inventory('Selasie', 'flatbread', 150);
+
+
+add_customer('Cust1', 'cust1@email.com', '123 Main St', 'Catonsvile', 'MD', '21045', '1234567890123456');
+add_customer('Cust11', 'cust11@email.com', '124 Main St', 'Catonsvile', 'MD', '21045', '2234567890123456');
+add_customer('Cust3', 'cust3@email.com', '125 Main St', 'DC', 'Virginia', '21046', '3234567890123456');
+add_customer('Cust111', 'cust111@email.com', '126 Main St', 'Catonsvile', 'MD', '21045', '4234567890123456');
+add_customer('CustNY1', 'custny1@email.com', 'New York Address', 'NY', 'NY', '10045', '1234567890123456');
+add_customer('CustNY2', 'custny2@email.com', 'New York Address', 'NY', 'NY', '10045', '2234567890123456');
+add_customer('CustNY3', 'custny3@email.com', 'New York Address', 'NY', 'NY', '10045', '3234567890123456');
+add_customer('CustPA1', 'custpa1@email.com', '146 Downtown Pennsylvania', 'PA', 'PA', '16822', '4234567890123456');
+add_customer('CustPA2', 'custpa2@email.com', '147 Downtown Pennsylvania', 'PA', 'PA', '16822', '5234567890123456');
+add_customer('CustPA3', 'custpa3@email.com', '148 Downtown Pennsylvania', 'PA', 'PA', '16822', '6234567890123456');
+add_customer('CustPA4', 'custpa4@email.com', '149 Downtown Pennsylvania', 'PA', 'PA', '16822', '7234567890123456');
+add_customer('CustPA5', 'custpa5@email.com', '150 Downtown Pennsylvania', 'PA', 'PA', '16822', '8234567890123456');
+add_customer('CustPA6', 'custpa6@email.com', '151 Downtown Pennsylvania', 'PA', 'PA', '16822', '9234567890123456');
+
+place_order('Bella Italia', 'Cust1',   'pizza',          TO_DATE('2024-03-10', 'YYYY-MM-DD'), 20, 'Mary');
+place_order('Bella Italia', 'Cust11',  'spaghetti',      TO_DATE('2024-03-15', 'YYYY-MM-DD'), 30, 'Mary');
+place_order('Bella Italia', 'Cust11',  'pizza',          TO_DATE('2024-03-15', 'YYYY-MM-DD'), 20, 'Mary');
+place_order('Bull Roast',   'CustNY1', 'fillet mignon',  TO_DATE('2024-04-01', 'YYYY-MM-DD'), 60, 'Hannah');
+place_order('Bull Roast',   'CustNY1', 'fillet mignon',  TO_DATE('2024-04-01', 'YYYY-MM-DD'), 60, 'Hannah');
+place_order('Bull Roast',   'CustNY1', 'fillet mignon',  TO_DATE('2024-04-02', 'YYYY-MM-DD'), 60, 'Hannah');
+place_order('Bull Roast',   'CustNY2', 'pork loin',      TO_DATE('2024-04-01', 'YYYY-MM-DD'), 15, 'Hannah');
+place_order('Ribs_R_US',    'CustNY1', 'burger', TO_DATE('2024-04-01', 'YYYY-MM-DD'), 60, 'Jack');
+place_order('Ribs_R_US',    'CustNY1', 'burger', TO_DATE('2024-04-02', 'YYYY-MM-DD'), 60, 'Jill');
+place_order('Ribs_R_US',    'CustNY2', 'pork loin',      TO_DATE('2024-04-01', 'YYYY-MM-DD'), 15, 'Jack');
+place_order('Taj Mahal',    'CustPA2', 'samosa',        TO_DATE('2024-05-01', 'YYYY-MM-DD'), 80, 'Gupta');
+
+place_order('Smokehouse',    'CustNY1', 'fillet mignon',        TO_DATE('2024-05-01', 'YYYY-MM-DD'), 90, 'Vallz');
+place_order('Taco',    'Cust11', 'salad',        TO_DATE('2024-05-01', 'YYYY-MM-DD'), 110, 'Mikey');
+place_order('Chapati',    'CustNY2', 'rice',        TO_DATE('2024-05-01', 'YYYY-MM-DD'), 170, 'Juno');
+place_order('Ethiop',    'CustPA1', 'flatbread',        TO_DATE('2024-05-01', 'YYYY-MM-DD'), 70, 'Harry');
+place_order('Selasie',    'CustPA2', 'meat chunks',        TO_DATE('2024-05-01', 'YYYY-MM-DD'), 20, 'Tom');
+
+
+
+Add_Review('cust1@gmail.com', find_restaurant_id('Ribs_R_US'), 4, 'Wonderful place, but expensive');
+Add_Review('cust1@gmail.com', find_restaurant_id('Bella Italia'), 2, 'Very bad food. I’m Italian and Bella Italia does NOT give you authentic Italian food');
+Add_Review('abc@abc.com', find_restaurant_id('Ribs_R_US'), 4, 'I liked the food. Good experience');
+Add_Review('dce@abc.com', find_restaurant_id('Ribs_R_US'), 5, 'Excellent');
+Add_Review('abc@abc.com', find_restaurant_id('Bella Italia'), 3, 'So-so');
+Add_Review('abc@abc.com', find_restaurant_id('Ribs_R_US'), 2, 'So-so. Low quality beef');
+Add_Review('abc@abc.com', find_restaurant_id('Taj Mahal'), 5, 'Best samosas ever');
+Add_Review('cust1@gmail.com', find_restaurant_id('Taj Mahal'), 4, 'I enjoyed their samosas, but did not like the dal');
+Add_Review('zzz@abc.com', find_restaurant_id('Taj Mahal'), 5, 'Excellent samosas');
+Add_Review('surajit@abc.com', find_restaurant_id('Taj Mahal'), 3, 'Not really authentic');
+Add_Review('dce@abc.com', find_restaurant_id('Bull Roast'), 5, 'Excellent');
+Add_Review('abc@abc.com', find_restaurant_id('Bull Roast'), 3, 'Just fine');
+Add_Review('abc@abc.com', find_restaurant_id('Bull Roast'), 4, 'I liked the food');
+
+
+Add_Review('abc@abc.com', find_restaurant_id('Smokehouse'), 3, 'I liked the food');
+Add_Review('zzz@abc.com', find_restaurant_id('Taco'), 4.5, 'I liked the food');
+Add_Review('cust1@abc.com', find_restaurant_id('Chapati'), 4.5, 'I liked the food');
+Add_Review('abc@abc.com', find_restaurant_id('Ethiop'), 3.5, 'I liked the food');
+Add_Review('dce@abc.com', find_restaurant_id('Selasie'), 2.5, 'I liked the food');
+
+
+End;
+/
+

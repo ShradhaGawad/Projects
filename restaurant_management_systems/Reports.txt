@@ -1,0 +1,117 @@
+
+
+-- Procedure to get income by state
+Create or replace procedure get_income_per_state
+IS
+Cursor c1 is Select DISTINCT Restaurant_state from Restaurants; -- Get all the distinct states that have restaurants
+Income orders.AMOUNT_PAID%type; -- to store the income
+Begin
+dbms_output.put_line (CHR(4)); -- Display empty line
+dbms_output.put_line('Reporting Income per state');
+for item in c1
+loop
+Select COALESCE(SUM(o.AMOUNT_PAID),0) into Income from orders o where o.RESTAURANT_ID in (Select RESTAURANT_ID from Restaurants where Restaurant_state = item.RESTAURANT_State);  --Get the restaurant Ids for one state at a time. 
+-- Get the Total Income for all the restaurants. If no restaurants are found, total income is set to 0. 
+dbms_output.put_line (item.RESTAURANT_state || ' : ' || Income); --Show restaurants names stored in cursor
+End loop;
+Exception   
+When others then dbms_output.put_line('Unknown Error when getting income per state' || SQLERRM);
+End;
+/
+
+-- Procedure to get income for restaurants per cuisine per state
+Create or replace procedure get_income_cuisinetype_state
+IS
+Cursor c1 is Select DISTINCT r.Restaurant_state, r.Cuisine_type_id, c.Cuisine_type_name from CuisineTypes c, RESTAURANTs r where r.Cuisine_Type_Id = c.Cuisine_Type_Id; -- Find states that have restaurants for a cuisinetype
+Income orders.AMOUNT_PAID%type;-- To store income
+Begin
+dbms_output.put_line (CHR(4)); -- To add a new line
+dbms_output.put_line('Reporting Income per cuisineType per state');
+for itemc1 in c1
+loop
+Select COALESCE(SUM(o.AMOUNT_PAID),0) into Income from orders o where o.RESTAURANT_ID in (Select RESTAURANT_ID from Restaurants where Restaurant_state = itemc1.RESTAURANT_State and cuisine_type_id = itemc1.Cuisine_type_id); --Get restaurantid for a cuisine type and state
+-- Income was not shown as 0 when using joins in one statement in case there are no orders for a restaurant with a cuisine type in a particular state. Hence, used above approach.
+-- Alternative SQL query: Select SUM(o.AMOUNT_PAID),c.Cuisine_type_name, r.RESTAURANT_state from orders o,Restaurants r, cuisinetypes c where r.restaurant_id = o.restaurant_id and c.cuisine_type_id = r.Cuisine_type_id group by RESTAURANT_state,Cuisine_type_name;
+dbms_output.put_line (itemc1.Cuisine_type_name || ', ' || itemc1.RESTAURANT_state || ' : ' || Income); --Show restaurants names stored in cursor
+End loop;
+Exception 
+When others then dbms_output.put_line('Unknown Error in getting income per state per cuisine' || SQLERRM);
+End;
+/
+
+--Report to calculate the total tips by each waiter
+CREATE OR REPLACE PROCEDURE calculate_total_tips_by_waiter AS
+BEGIN
+dbms_output.put_line ('Total tips by Each Waiter');
+FOR waiter_rec IN (SELECT DISTINCT waiter_id FROM orders) LOOP
+DECLARE 
+total_tips NUMBER;
+waiter_name varchar(50);
+BEGIN
+
+SELECT SUM(tip) INTO total_tips
+FROM orders
+WHERE waiter_id = waiter_rec.waiter_id;
+SELECT waiter_name into waiter_name from waiters where waiter_rec.waiter_id = waiter_id;
+DBMS_OUTPUT.PUT_LINE('Waiter ID: ' || waiter_rec.waiter_id || ', Name : ' || waiter_name || ', Total Tips: ' || total_tips);
+END;
+END LOOP;
+dbms_output.put_line (CHR(4)); -- To add a new line
+
+EXCEPTION 
+WHEN OTHERS THEN
+DBMS_OUTPUT.PUT_LINE('Error occurred');
+END;
+/
+--Report to calculate total tips earned by waiters per state.
+CREATE OR REPLACE PROCEDURE calculate_total_tips_by_state AS
+BEGIN
+    dbms_output.put_line ('Total tips earned by waiters per state');
+FOR state_rec IN (SELECT DISTINCT r.restaurant_state FROM restaurants r JOIN orders o ON r.restaurant_id = o.restaurant_id) LOOP
+DECLARE total_tips_by_state NUMBER;
+BEGIN
+SELECT SUM(o.tip) INTO total_tips_by_state
+FROM restaurants r
+JOIN orders o ON r.restaurant_id = o.restaurant_id
+JOIN waiters w ON o.waiter_id = w.waiter_id
+WHERE r.restaurant_state = state_rec.restaurant_state;
+DBMS_OUTPUT.PUT_LINE('Total Tips earned by waiter in State ' || state_rec.restaurant_state || ' : ' || total_tips_by_state);
+END;
+END LOOP;
+dbms_output.put_line (CHR(4)); -- To add a new line
+
+EXCEPTION 
+WHEN OTHERS THEN
+DBMS_OUTPUT.PUT_LINE('Error occurred');
+END;
+
+/
+
+
+Declare
+Begin
+DBMS_OUTPUT.PUT_LINE ('==============================================='); 
+DBMS_OUTPUT.PUT_LINE ('==========Below are Member 1 Reports======== ');
+DBMS_OUTPUT.PUT_LINE ('===============================================');
+
+
+get_income_per_state;
+get_income_cuisinetype_state;
+
+end;
+/
+
+
+--Report Total Tips
+Declare
+Begin
+DBMS_OUTPUT.PUT_LINE ('==============================================='); 
+DBMS_OUTPUT.PUT_LINE ('==========Below are Member 2 Reports======== ');
+DBMS_OUTPUT.PUT_LINE ('===============================================');
+dbms_output.put_line (CHR(4)); -- To add a new line
+calculate_total_tips_by_waiter;
+dbms_output.put_line (CHR(4)); -- To add a new line
+calculate_total_tips_by_state;
+
+end;
+

@@ -1,0 +1,412 @@
+
+
+--Create Tables CuisineTypes and Restaurants
+
+CREATE TABLE CuisineTypes(CUISINE_TYPE_ID int, CUISINE_TYPE_NAME varchar(20) UNIQUE, PRIMARY KEY(CUISINE_TYPE_ID));
+/
+CREATE TABLE Restaurants(RESTAURANT_ID int,
+RESTAURANT_NAME varchar(50) UNIQUE,
+RESTAURANT_STREET varchar(50),
+RESTAURANT_CITY varchar(20),
+RESTAURANT_STATE varchar(20),
+RESTAURANT_ZIP varchar(20) NOT NULL,
+CUISINE_TYPE_ID int NOT NULL, 
+PRIMARY KEY(RESTAURANT_ID),
+foreign key(CUISINE_TYPE_ID) references CuisineTypes(CUISINE_TYPE_ID));
+
+/
+--Create Sequences for primary keys, CUISINE_TYPE_ID and RESTAURANT_ID
+Create sequence CUISINE_TYPE_ID start with 01;
+/
+Create sequence RESTAURANT_ID start with 101;
+
+/
+--Create helper function FIND_CUISINE_TYPE_ID to get the primary key for the given cuisineType
+Create or replace function FIND_CUISINE_TYPE_ID(cuisinetype in varchar) return number
+IS
+ctid number;
+BEGIN
+        select cuisine_type_id into ctid from cuisinetypes where CUISINE_TYPE_NAME = cuisinetype;
+        return ctid;
+Exception
+When no_data_found then dbms_output.put_line('CuisineType ' || cuisinetype || ' doesn t exists'); return ctid;
+When others then dbms_output.put_line('CuisineType ' || cuisinetype || ' cannot be retrieved'); return ctid;
+End;
+/
+
+
+--Create helper function FIND_RESTAURANT_ID to get the primary key for the given Restaurant names
+Create or replace function FIND_RESTAURANT_ID (rname in varchar) return number
+IS
+Rid number;
+BEGIN
+Select RESTAURANT_ID into rid from Restaurants where RESTAURANT_NAME = rname;
+        return rid;
+Exception
+When no_data_found then dbms_output.put_line('Restaurant ' || rname || ' doesn t exists'); return rid;
+When others then dbms_output.put_line('Restaurant ' || rname || ' cannot be retrieved'); return rid;
+End;
+/
+
+
+--Create procedure to add a new cuisine type
+Create or replace procedure add_cuisinetype(cuisinetype varchar)
+IS
+begin
+INSERT INTO CuisineTypes Values(CUISINE_TYPE_ID.nextval, cuisinetype);
+dbms_output.put_line('Cuisine Type ' || cuisinetype  || ' is added');
+Exception
+-- Show exception If same cuisine is added again
+When dup_val_on_index then dbms_output.put_line('Cuisine Type ' || cuisinetype || ' already exists');
+When others then dbms_output.put_line('Cuisine Type ' || cuisinetype ||  ' couldn t be added');
+end;
+/
+
+--Create procedure to add a new restaurant
+Create or replace procedure add_restaurants(RESTAURANT_NAME varchar, RESTAURANT_STREET varchar, RESTAURANT_CITY varchar, RESTAURANT_STATE varchar, RESTAURANT_ZIP int, CUISINE_TYPE_ID int)
+IS
+begin
+INSERT INTO Restaurants Values(RESTAURANT_ID.nextval, RESTAURANT_NAME, RESTAURANT_STREET, RESTAURANT_CITY, RESTAURANT_STATE, RESTAURANT_ZIP, CUISINE_TYPE_ID);
+dbms_output.put_line('Restaurant named ' || RESTAURANT_NAME  || ' is added');
+Exception
+-- Show exception If same restaurant is added again
+When dup_val_on_index then dbms_output.put_line('Restaurant ' || RESTAURANT_NAME || ' already exists');
+When others then dbms_output.put_line('Restaurant ' || RESTAURANT_NAME || ' couldn t be added');
+end;
+/
+
+--creating a table for waiters
+create table WAITERS(WAITER_ID INT PRIMARY KEY, WAITER_NAME varchar(50), RESTAURANT_ID INT, foreign key (RESTAURANT_ID) references RESTAURANTS(RESTAURANT_ID) );
+/
+--creating a sequence for waiters table
+create SEQUENCE waiter_seq
+    INCREMENT BY 1
+    start with 01;
+    
+/
+
+--Helper function to retrieve the waiter id given the waiter name
+CREATE or REPLACE FUNCTION FIND_WAITER_ID (waitername waiters.waiter_name%type, restaurantid waiters.restaurant_id%type)
+          RETURN number
+          IS
+            w_id number;
+          BEGIN   
+         -- Initialize w_id to NULL
+            w_id := NULL;        
+ -- Query the waiter_id based on the provided waiter name 
+            select waiter_id into w_id from waiters where waiter_name = waitername and restaurant_id = restaurantid;
+ -- Return the waiter ID
+            return w_id;
+            EXCEPTION
+ -- Handle exception when no data is found for the provided waiter name
+                when no_data_found then
+                dbms_output.put_line('No such waiter');
+                return null;
+         END;
+/          
+
+
+
+
+--Procedure to hire a waiter given the waiter name and the restaurant name are given
+create or replace PROCEDURE HIRE_WAITER(h_waiter_name waiters.waiter_name%type, h_restaurant_ID restaurants.restaurant_ID%type)
+AS          
+              h_waiter_id number;
+              h_restaurant_name varchar(50);
+          BEGIN
+              --generate a new waiter ID using the WAITER_SEQ sequence
+              select waiter_seq.nextval into h_waiter_id from dual;
+              select restaurant_name into h_restaurant_name from restaurants where restaurant_id = h_restaurant_ID;
+              --insert record into waiters table
+              insert into waiters values (h_waiter_id, h_waiter_name, h_restaurant_ID);
+              dbms_output.put_line('Newly hired waiter in ' || h_restaurant_name || ' is : ' || h_waiter_name );
+              
+              EXCEPTION
+                --handling exception if any error pops up.
+                when OTHERS then
+                dbms_output.put_line('Error in hiring the waiter');
+          END;
+/ 
+
+
+
+--Create MenuItems table 
+CREATE TABLE MenuItems (
+   cuisine_type_id INT,
+   menu_item_id INT,
+   name VARCHAR(50),
+   price DECIMAL(10,2),
+   PRIMARY KEY (menu_item_id),
+    CONSTRAINT unique_composite UNIQUE (NAME, CUISINE_TYPE_ID)
+);
+
+
+-- Create RestaurantInventory table 
+CREATE TABLE RestaurantInventory (
+   menu_item_id INT NOT NULL,
+   menu_item_name VARCHAR(50),
+   restaurant_id INT NOT NULL,
+   quantity INT,
+   FOREIGN KEY (restaurant_id) REFERENCES Restaurants(restaurant_id),
+   FOREIGN KEY (menu_item_id) REFERENCES MenuItems(menu_item_id),
+   Constraint menu_res unique(menu_item_id, restaurant_id)
+);
+/
+
+-- Create sequences for generating IDs automatically
+CREATE SEQUENCE menu_item_id_seq
+   START WITH 1
+   INCREMENT BY 1
+   NOCACHE
+   NOCYCLE;
+
+/
+Create or replace function FIND_MENU_ITEM_ID (item_name in varchar) return number
+IS
+MIid number;
+BEGIN
+  SELECT MENU_ITEM_ID into MIid from MenuItems where NAME = item_name;
+  return MIid;
+EXCEPTION
+  WHEN no_data_found then 
+    DBMS_OUTPUT.PUT_LINE('MenuItems ' || item_name ||' doesn''t exist');
+    return NULL;
+  WHEN OTHERS then 
+    DBMS_OUTPUT.PUT_LINE('MenuItems ' || item_name ||' cannot be retrieved');
+    return NULL;
+END;
+
+/
+
+
+CREATE OR REPLACE PROCEDURE create_menu_item(
+    NAME VARCHAR,
+    PRICE DECIMAL,
+    CUISINE_TYPE_ID NUMBER
+)
+IS
+BEGIN
+INSERT INTO MenuItems (CUISINE_TYPE_ID, MENU_ITEM_ID, NAME, PRICE)
+VALUES (CUISINE_TYPE_ID, MENU_ITEM_ID_SEQ.NEXTVAL, NAME, PRICE);    
+EXCEPTION
+    WHEN dup_val_on_index THEN 
+        DBMS_OUTPUT.PUT_LINE('Menu Item ' || Name || ' already exists for the given cuisine');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error adding menu item: ' || SQLERRM);
+END;
+
+/
+
+--CUSTOMERS table
+CREATE TABLE Customers (
+    Customer_ID INT PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Email VARCHAR(100),
+    Street_Address VARCHAR(100),
+    City VARCHAR(50),
+    State VARCHAR(50) NOT NULL,
+    Zip VARCHAR(10),
+    Credit_Card_Number VARCHAR(20)
+);
+/
+--ORDERS table
+CREATE TABLE Orders (
+    Order_ID INT PRIMARY KEY,
+    Restaurant_ID INT NOT NULL,
+    Customer_ID INT NOT NULL,
+    Order_Date DATE,
+    Menu_Item_ID INT NOT NULL,
+    Waiter_ID INT NOT NULL,
+    Amount_Paid NUMBER,
+    Tip NUMBER,
+    FOREIGN KEY (Restaurant_ID) REFERENCES Restaurants(Restaurant_ID),
+    FOREIGN KEY (Customer_ID) REFERENCES Customers(Customer_ID),
+    FOREIGN KEY (Menu_Item_ID) REFERENCES MenuItems(Menu_Item_ID),
+    FOREIGN KEY (Waiter_ID) REFERENCES Waiters(Waiter_ID)
+);
+
+/
+--Creating sequences 
+CREATE SEQUENCE customer_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+/
+CREATE SEQUENCE order_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NOCACHE
+    NOCYCLE;
+/
+--FIND_CUSTOMER_ID Function
+CREATE OR REPLACE FUNCTION FIND_CUSTOMER_ID(p_name VARCHAR2) RETURN NUMBER
+IS
+    v_customer_id CUSTOMERS.CUSTOMER_ID%TYPE;
+BEGIN
+    SELECT customer_id INTO v_customer_id FROM CUSTOMERS WHERE name = p_name;
+    RETURN v_customer_id;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Customer not found.');
+        RETURN NULL;
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error finding customer ID: ' || SQLERRM);
+        RETURN NULL;
+END;
+/
+
+--FIND_ORDER_ID Function
+CREATE OR REPLACE FUNCTION FIND_ORDER_ID(p_restaurant_id NUMBER, p_customer_id NUMBER, p_order_date DATE) RETURN NUMBER
+IS
+    v_order_id ORDERS.ORDER_ID%TYPE;
+BEGIN
+    SELECT order_id INTO v_order_id 
+    FROM ORDERS 
+    WHERE restaurant_id = p_restaurant_id 
+    AND customer_id = p_customer_id 
+    AND order_date = p_order_date;
+    RETURN v_order_id;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Order not found.');
+        RETURN NULL;
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error finding order ID: ' || SQLERRM);
+        RETURN NULL;
+END;
+/
+
+-- Create review table
+CREATE TABLE Reviews (
+    Review_ID INT PRIMARY KEY,
+    Restaurant_ID INT NOT NULL,
+    Reviewer_Email VARCHAR2(255), 
+    Stars_Given INT CHECK (Stars_Given BETWEEN 1 AND 5) NOT NULL,
+    Review_Text VARCHAR2(4000),  
+    FOREIGN KEY (Restaurant_ID) REFERENCES Restaurants(Restaurant_ID)
+);
+/
+CREATE TABLE Recommendations (
+    Recommendation_ID INT PRIMARY KEY,
+    Customer_ID INT NOT NULL,
+    Recommended_Restaurant_ID INT NOT NULL,
+    Recommendation_Date DATE, 
+    FOREIGN KEY (Customer_ID) REFERENCES Customers(Customer_ID),
+    FOREIGN KEY (Recommended_Restaurant_ID) REFERENCES Restaurants(Restaurant_ID)
+);
+/
+-- Sequence for Review_ID 
+CREATE SEQUENCE Review_ID_SEQ
+    START WITH 1
+    INCREMENT BY 1
+    NOMAXVALUE;
+
+-- Procedure to add a review
+
+
+CREATE OR REPLACE PROCEDURE Add_Review(
+    p_Reviewer_Email VARCHAR2,
+    p_Restaurant_ID INT,
+    p_Stars_Given INT,
+    p_Review_Text VARCHAR2
+) AS
+BEGIN
+    INSERT INTO Reviews (Review_ID, Restaurant_ID, Reviewer_Email, Stars_Given, Review_Text)
+    VALUES (Review_ID_SEQ.NEXTVAL, p_Restaurant_ID, p_Reviewer_Email, p_Stars_Given, p_Review_Text);
+    DBMS_OUTPUT.PUT_LINE('Review of ' || p_Reviewer_Email || ' added successfully.');
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error adding review: ' || SQLERRM);
+END;
+
+/
+
+
+CREATE OR REPLACE PROCEDURE ADD_ITEM_TO_INVENTORY(
+    rname VARCHAR2,
+    item_name VARCHAR2,
+    quantity INT
+)
+IS
+BEGIN
+    -- Get the restaurant ID using a cursor
+INSERT INTO RestaurantInventory (menu_item_id, menu_item_name, restaurant_id, quantity)
+VALUES (find_menu_item_id(item_name), item_name, FIND_RESTAURANT_ID(rname), quantity);
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Menu item could not be added to restaurant inventory');
+        DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END;
+
+/
+
+CREATE OR REPLACE PROCEDURE UPDATE_MENU_ITEM_INVENTORY(
+    p_restaurant_id NUMBER,
+    p_menu_item_id NUMBER,
+    p_quantity NUMBER
+)
+IS
+    v_current_quantity NUMBER;
+BEGIN
+    SELECT quantity INTO v_current_quantity FROM RestaurantInventory WHERE restaurant_id = p_restaurant_id AND menu_item_id = p_menu_item_id;
+
+    IF v_current_quantity >= p_quantity THEN
+        UPDATE RestaurantInventory SET quantity = quantity - p_quantity
+        WHERE restaurant_id = p_restaurant_id AND menu_item_id = p_menu_item_id;
+
+        DBMS_OUTPUT.PUT_LINE('Menu item inventory updated for restaurant ID ' || p_restaurant_id || ' and menu item ID ' || p_menu_item_id);
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Requested quantity exceeds the available inventory. Updating quantity to 0 for restaurant ID ' || p_restaurant_id || ' and menu item ID ' || p_menu_item_id);
+        -- Update the quantity to 0 to prevent negative inventory
+        UPDATE RestaurantInventory SET quantity = 0 WHERE restaurant_id = p_restaurant_id AND menu_item_id = p_menu_item_id;
+    END IF;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error updating menu item inventory: ' || SQLERRM);
+END;
+/
+
+-- Procedure for Add a Customer
+CREATE OR REPLACE PROCEDURE add_customer(
+    p_name VARCHAR2,
+    p_email VARCHAR2,
+    p_street VARCHAR2,
+    p_city VARCHAR2,
+    p_state VARCHAR2,
+    p_zip VARCHAR2,
+    p_credit_card_number VARCHAR2
+) AS
+BEGIN
+    INSERT INTO Customers (customer_id, name, email, street_address, city, state, zip, credit_card_number)
+    VALUES (customer_id_seq.NEXTVAL, p_name, p_email, p_street, p_city, p_state, p_zip, p_credit_card_number);
+    DBMS_OUTPUT.PUT_LINE('Customer ' || p_name || ' added successfully.');
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error adding customer: ' || SQLERRM);
+END;
+/
+
+
+--procedure for placed order 
+CREATE OR REPLACE PROCEDURE place_order (
+    p_restaurant_name VARCHAR2,
+    p_customer_name VARCHAR2,
+    p_menu_item_name VARCHAR2,
+    p_order_date DATE,
+    p_amount_paid NUMBER,
+    p_waiter_name VARCHAR2
+) AS
+    v_tip NUMBER;
+BEGIN
+    v_tip := p_amount_paid * 0.20;
+    INSERT INTO Orders (order_id, restaurant_id, customer_id, order_date, menu_item_id, waiter_id, amount_paid, tip)
+    VALUES (order_id_seq.NEXTVAL, find_restaurant_id(p_restaurant_name), FIND_CUSTOMER_ID(p_customer_name), p_order_date, find_menu_item_id(p_menu_item_name), find_waiter_id(p_waiter_name,find_restaurant_id(p_restaurant_name)), p_amount_paid, v_tip);
+    DBMS_OUTPUT.PUT_LINE('Order placed successfully with a tip of ' || v_tip || '. Waiter: ' || p_waiter_name);
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error placing order: ' || SQLERRM);
+END;
+/
+
