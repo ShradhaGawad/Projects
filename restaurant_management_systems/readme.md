@@ -41,7 +41,7 @@ This database system provides insights into:
   * Complex JOINs and aggregations
   * Use of `INDEX`, `SEQUENCE`, `VIEWS`
   * PL/SQL procedure logic and parameterized queries
-  * 
+    
 #### **Key Takeaways** 🚀
 
 * **End-to-end system creation** from schema to business insights.
